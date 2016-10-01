@@ -3,7 +3,7 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   background-repeat: no-repeat;
   background-size: cover;
-  background-image: url(http://communications.oregonstate.edu/sites/communications.oregonstate.edu/files/background3.jpg);
+  background-image: url(/images/aged_antique_certificate.jpg); /* from http://all-free-download.com/free-photos/download/aged_antique_certificate_269453_download.html*/
 }
 
 a {
