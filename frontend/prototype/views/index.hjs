@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ title }}</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <script type="text/javascript" src="../dist/bignumber/bignumber.min.js"></script>
+    <script type="text/javascript" src="../dist/web3/web3-light.js"></script>
+    <!-- stub api implementation goes here-->
+    <script type="text/javascript">
+    function Api(web3){
+        this.web3 = web3;
+      }
+    //passes contract without newlines to funtion
+    Api.prototype.getContractSource = function(done){
+      var client = new XMLHttpRequest();
+      client.open('GET', '/contracts/register_diploma.sol',true);
+      client.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          done(null,client.responseText);
+        }
+      }
+      client.send();
+    }
+
+    Api.prototype.getCompiledContract = function (done) {
+      this.getContractSource(function(error,contractString){
+          web3.eth.compile.solidity(contractString,function(err,result){
+            if(err){
+              return console.error(err);
+            }
+            var contract = web3.eth.contract(result);
+            done(null,contract);
+          });
+      });
+    }
+
+    Api.prototype.createContract = function(done){
+      this.getCompiledContract(function(err,compiledContract){
+        web3.eth.contract(compiledContract.abi.diploma.info.abiDefinition).new({gas:1000000,from:web3.eth.defaultAccount,data:compiledContract.abi.diploma.code},function(err,contract){
+          if(err){
+            return console.error(err);
+          }
+          if(contract.address){
+            done(null,contract);
+          }
+        });
+      });
+    }
+    Api.prototype.getInsertedContract = function(done){
+      this.getCompiledContract(function(err,compiledContract){
+         var diploma =   web3.eth.contract(compiledContract.abi.diploma.info.abiDefinition).at(this.contractAdress);
+         return(null,diploma);
+      });
+    }
+
+    Api.prototype.add_university = function(callerUniversityId, universityId, name, owner, pubkey_hash,done) {
+        this.getInsertedContract(function(err,diploma){
+            diploma.add_university(callerUniversityId,universityId,name,owner,pubkey_hash);
+            done();
+        });
+    }
+    Api.prototype.add_diploma = function(universityId, diplomaId, diploma_ipfs_link,done) {
+      this.getInsertedContract(function(err,diploma){
+          diploma.add_diploma(universityId,diplomaId,diploma_ipfs_link);
+          done();
+      });
+    }
+    Api.prototype.contractAdress = "0x5d2828f9bc0931e2d486548def7554ff7e945702";
+
+
+    </script>
+
+    <script type="text/javascript">
+    var Web3 = require("web3");
+    var web3 = new Web3();
+    web3.setProvider(new web3.providers.HttpProvider());
+    web3.eth.defaultAccount = web3.eth.accounts[0];
+    var api = new Api(web3);
+
+    function add_university(){
+        var caller = $('#InputUniversityCaller').val() || "";
+        var universityId = $('#InputUniversityId').val() ||"";
+        var universityName = $('#InputUniversityName').val() || "";
+        var universityAdress = $('#InputUniversityAdress').val() || "";
+        console.log("Adding university with: " + caller + ":" + universityId + ":" + universityName + ":" + universityAdress);
+        api.add_university(caller,universityId,universityName,universityAdress,"",function(){});
+    }
+
+    function add_diploma(){
+        var diplomaId = $('#InputDiplomaId').val() || "";
+        var diplomaUniversityId = $('#InputDiplomaUniversityId').val() || "";
+        var diplomaLink = $('#InputDiplomaLink').val() || "";
+        console.log("Adding diploma with: " + diplomaId + ":"+ diplomaUniversityId + ":" + diplomaLink);
+        api.add_diploma(diplomaId,diplomaUniversityId,diplomaLink);
+    }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="jumbotron">
+        <h1>Get your diplomas certified!</h1>
+        <h4>All your diplomas stored savely in the blockchain.</h4>
+      </div>
+      <div class="row">
+        <div class="col-md-6 col-xs-12">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              Add University
+            </div>
+
+
+            <div class="panel-body ">
+              <form>
+                <div class="form-group form-university">
+                  <label for="InputUniversityCaller">Creating University ID</label>
+                  <input type="text" class="form-control" id="InputUniversityCaller" placeholder="Very long number">
+                </div>
+
+                <div class="form-group">
+                  <label for="InputUniversityId">University ID</label>
+                  <input type="text" class="form-control" id="InputUniversityId" placeholder="Very long number">
+                </div>
+
+                <div class="form-group">
+                    <label for="InputUniversityName">University</label>
+                    <input type="text" class="form-control" id="InputUniversityName" placeholder="Havard Medical School">
+                </div>
+
+                <div class="form-group">
+                  <label for="InputUniversityAdress">University Adress</label>
+                  <input type="text" class="form-control" id="InputUniversityAdress" placeholder="Etherum Account (e.g. 0x1321983782abe38294388)">
+                </div>
+                <button onClick="add_university()" type="button" class="btn btn-primary pull-right">Submit</button>
+              </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xs-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            Add Diploma
+          </div>
+
+
+          <div class="panel-body ">
+            <form>
+              <div class="form-group form-diploma">
+                <label for="InputDiplomaId">Diploma ID</label>
+                <input type="text" class="form-control" id="InputDiplomaId" placeholder="Very long number">
+              </div>
+
+              <div class="form-group">
+                <label for="InputDiplomaUniversityId">University ID</label>
+                <input type="text" class="form-control" id="InputDiplomaUniversityId" placeholder="Very long number">
+              </div>
+
+              <div class="form-group">
+                  <label for="InputDiplomaLink">IPFS Link</label>
+                  <input type="text" class="form-control" id="InputDiplomaLink" placeholder="ipfs://.....">
+              </div>
+
+              <button onClick="add_diploma()" type="button" class="btn btn-primary pull-right">Submit</button>
+            </form>
+        </div>
+      </div>
+    </div>
+
+    </div>
+  </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+  </body>
+</html>

@@ -1,0 +1,20 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url(http://communications.oregonstate.edu/sites/communications.oregonstate.edu/files/background3.jpg);
+}
+
+a {
+  color: #00B7FF;
+}
+.row-eq-height {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display:         flex;
+}
+.smaller-panel{
+  height: 100%;
+}
