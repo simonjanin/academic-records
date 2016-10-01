@@ -26,7 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 
 app.use('/dist/web3',express.static( __dirname + '/node_modules/web3/dist'));
-app.use('/dist/bignumber',express.static( __dirname + '/node_modules/web3/node_modules/bignumber.js'));
+app.use('/dist/bignumber',express.static( __dirname + '/node_modules/web3/bower/bignumber.js'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
