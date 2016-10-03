@@ -10,6 +10,7 @@
 
     <script type="text/javascript" src="../dist/bignumber/bignumber.min.js"></script>
     <script type="text/javascript" src="../dist/web3/web3-light.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/js-sha3/0.5.5/sha3.min.js"></script>
     <!-- stub api implementation goes here-->
     <script type="text/javascript">
     function Api(web3){
@@ -54,28 +55,36 @@
     Api.prototype.getInsertedContract = function(done){
       this.getCompiledContract(function(err,compiledContract){
          var diploma =   web3.eth.contract(compiledContract.abi.diploma.info.abiDefinition).at(this.contractAdress);
-         return(null,diploma);
+         done(null,diploma);
       });
     }
 
     Api.prototype.add_university = function(callerUniversityId, universityId, name, owner, pubkey_hash,done) {
         this.getInsertedContract(function(err,diploma){
             diploma.add_university(callerUniversityId,universityId,name,owner,pubkey_hash);
-            done();
+            done(null,null);
         });
     }
     Api.prototype.add_diploma = function(universityId, diplomaId, diploma_ipfs_link,done) {
       this.getInsertedContract(function(err,diploma){
           diploma.add_diploma(universityId,diplomaId,diploma_ipfs_link);
-          done();
+          done(null,null);
       });
     }
     Api.prototype.contractAdress = "0x5d2828f9bc0931e2d486548def7554ff7e945702";
 
+    Api.prototype.calculateHashFromString = function(data,done){
+        done(null,keccak_512(data));
+    }
 
-    </script>
+    Api.prototype.isStringInContract = funtion(string,done){
+      this.getInsertedContract(function(err,contract){
+        this.calculateHashFromString(string,function(err,hashedString){
+          done(null,contract.get_hash(hashedString));
+        });
+      })
+    }
 
-    <script type="text/javascript">
     var Web3 = require("web3");
     var web3 = new Web3();
     web3.setProvider(new web3.providers.HttpProvider());
@@ -88,7 +97,15 @@
         var universityName = $('#InputUniversityName').val() || "";
         var universityAdress = $('#InputUniversityAdress').val() || "";
         console.log("Adding university with: " + caller + ":" + universityId + ":" + universityName + ":" + universityAdress);
-        api.add_university(caller,universityId,universityName,universityAdress,"",function(){});
+        api.add_university(caller,universityId,universityName,universityAdress,"",function(){
+          console.log("received university confirmation");
+          flipPanel($('#panel-university'),function () {
+            $('#InputUniversityCaller').val('');
+            $('#InputUniversityId').val('');
+            $('#InputUniversityName').val('');
+            $('#InputUniversityAdress').val('');
+          });
+        });
     }
 
     function add_diploma(){
@@ -96,7 +113,21 @@
         var diplomaUniversityId = $('#InputDiplomaUniversityId').val() || "";
         var diplomaLink = $('#InputDiplomaLink').val() || "";
         console.log("Adding diploma with: " + diplomaId + ":"+ diplomaUniversityId + ":" + diplomaLink);
-        api.add_diploma(diplomaId,diplomaUniversityId,diplomaLink);
+        api.add_diploma(diplomaId,diplomaUniversityId,diplomaLink,function(){
+          flipPanel($('#panel-diploma'),function(){
+          console.log("received diploma confirmation");
+            $('#InputDiplomaId').val('');
+            $('#InputDiplomaUniversityId').val('');
+            $('#InputDiplomaLink').val('');
+          });
+        });
+    }
+    function flipPanel(panel,intermediate){
+      panel.addClass('panel-flip');
+      setTimeout(function(){
+        panel.removeClass(panel);
+      },2000);
+      setTimeout(intermediate,500);
     }
     </script>
   </head>
@@ -108,13 +139,13 @@
       </div>
       <div class="row">
         <div class="col-md-6 col-xs-12">
-          <div class="panel panel-default">
+          <div class="panel panel-default"  id="panel-university">
             <div class="panel-heading">
               Add University
             </div>
 
 
-            <div class="panel-body ">
+            <div class="panel-body">
               <form>
                 <div class="form-group form-university">
                   <label for="InputUniversityCaller">Creating University ID</label>
@@ -142,13 +173,13 @@
       </div>
 
       <div class="col-md-6 col-xs-12">
-        <div class="panel panel-default">
+        <div class="panel panel-default" id ="panel-diploma">
           <div class="panel-heading">
             Add Diploma
           </div>
 
 
-          <div class="panel-body ">
+          <div class="panel-body" >
             <form>
               <div class="form-group form-diploma">
                 <label for="InputDiplomaId">Diploma ID</label>
