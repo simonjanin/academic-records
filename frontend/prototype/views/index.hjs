@@ -77,7 +77,7 @@
         done(null,keccak_512(data));
     }
 
-    Api.prototype.isStringInContract = funtion(string,done){
+    Api.prototype.isStringInContract = function(string,done){
       this.getInsertedContract(function(err,contract){
         this.calculateHashFromString(string,function(err,hashedString){
           done(null,contract.get_hash(hashedString));
