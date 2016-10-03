@@ -41,7 +41,12 @@ contract diploma {
     function authorized_to_modify() {} // only the multisig and the concerned university can modify.
     function get_diploma_mapping() {}
     function get_university_mapping() {}
-    function get_diploma_hash(uint universityId, uint diplomaId) {}
+    
+    function get_diploma_hash(uint universityId, uint diplomaId) returns (bytes32) {
+        return signatories[universityId].diplomas[diplomaId];
+    }
+    
+
     function get_owner_address() {}
     function get_university_name(uint universityId) {}
     // more queries
