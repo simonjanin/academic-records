@@ -40,15 +40,15 @@ contract diploma {
     function get_diploma_mapping() {}
     function get_university_mapping() {}
     
-    function get_diploma_hash(uint universityId, uint diplomaId) returns (bytes32) {
+    function get_diploma_hash(uint universityId, uint diplomaId) returns constant (bytes32) {
         return signatories[universityId].diplomas[diplomaId];
     }
     
-    function ping_pong(uint id) returns (uint) {
+    function ping_pong(uint id) returns constant (uint) {
         return id;
     }
 
-    function bim_bam(bytes32 str) returns (bytes32) {
+    function bim_bam(bytes32 str) returns constant (bytes32) {
         return str;
     }
 
