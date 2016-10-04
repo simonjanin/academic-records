@@ -28,9 +28,7 @@ contract diploma {
     
     function add_diploma(uint universityId, uint diplomaId, bytes32 diploma_ipfs_link) {
         // diploma and certificate validity have to be checked externally
-        if (signatories[universityId].owner == msg.sender) {
-            signatories[universityId].diplomas[diplomaId] = diploma_ipfs_link;
-        }
+        signatories[universityId].diplomas[diplomaId] = diploma_ipfs_link; // UNSAFE, ONLY FOR DEMO PURPOSES!
     }
     
     // Commands to update the state
