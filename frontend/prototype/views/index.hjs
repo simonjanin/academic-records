@@ -276,7 +276,7 @@
               </div>
 
               <div class="form-group">
-                  <label for="InputDiplomaFile">IPFS Link Hash</label>
+                  <label for="InputDiplomaFile">Certificate File</label>
                   <input type="file" class="form-control" id="InputDiplomaFile" placeholder="9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658">
               </div>
 
