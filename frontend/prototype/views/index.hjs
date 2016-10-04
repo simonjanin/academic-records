@@ -53,8 +53,9 @@
       });
     }
     Api.prototype.getInsertedContract = function(done){
+      var myThis = this;
       this.getCompiledContract(function(err,compiledContract){
-         var diploma =   web3.eth.contract(compiledContract.abi.diploma.info.abiDefinition).at(this.contractAdress);
+         var diploma =   web3.eth.contract(compiledContract.abi.diploma.info.abiDefinition).at(myThis.contractAdress);
          done(null,diploma);
       });
     }
@@ -67,11 +68,11 @@
     }
     Api.prototype.add_diploma = function(universityId, diplomaId, diploma_ipfs_link,done) {
       this.getInsertedContract(function(err,diploma){
-          diploma.add_diploma(universityId,diplomaId,diploma_ipfs_link);
+          diploma.add_diploma( universityId,diplomaId,diploma_ipfs_link);
           done(null,null);
       });
     }
-    Api.prototype.contractAdress = "0x3c2fa630a2865a301ccf515bad698e0830075fe3";
+    Api.prototype.contractAdress = "0xc2f79301949ee14d692797abeccc19d5bc44ddc4";
 
     Api.prototype.calculateHashFromString = function(data,done){
         done(null,keccak_256(data));
