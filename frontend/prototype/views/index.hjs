@@ -72,7 +72,7 @@
           done(null,null);
       });
     }
-    Api.prototype.contractAdress = "0xc2f79301949ee14d692797abeccc19d5bc44ddc4";
+    Api.prototype.contractAdress = "0x3b5d4ecd27f988409822753fc52ef5b267e4ad04";
 
     Api.prototype.calculateHashFromString = function(data,done){
         done(null,keccak_256(data));
@@ -92,15 +92,15 @@
       reader.readAsText(path);
     }
 
-    Api.prototype.checkDiploma = function(string,universityId,diplomaId,done){
+    Api.prototype.checkDiploma = function(hashedString,universityId,diplomaId,done){
       var myThis = this;
       this.getInsertedContract(function(err,contract){
-        myThis.calculateHashFromString(string,function(err,hashedString){
+
           var nodeHash = contract.get_diploma_hash(universityId,diplomaId);
-          console.log('Hash for university '+ universityId + ' and diploma ' + diplomaId + ' is ' + nodeHash);
-          done(null,nodeHash === hashedString);
+          console.log('Hash for university '+ universityId + ' and diploma ' + diplomaId + ' is ' + nodeHash + " and file " + hashedString);
+          var returnv = nodeHash == hashedString;
+          done(null,returnv);
         });
-      })
     }
 
     var Web3 = require("web3");

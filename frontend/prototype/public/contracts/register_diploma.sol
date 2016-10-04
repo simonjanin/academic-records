@@ -10,9 +10,9 @@ contract diploma {
         mapping(uint => bytes32) diplomas;
         // possibly add a voting weight, but should prob be abstracted away by using external multisig contract
     }
-    
+
     mapping(uint => Universities) signatories;
-    
+
     function add_university(uint callerUniversityId, uint universityId, string name, address owner, bytes32 pubkey_hash) {
         // we'll need to create a consensus algorithm to modify the Universities struct, prob maj voting
         if (msg.sender == signatories[callerUniversityId].owner || callerUniversityId == 0) {
@@ -25,30 +25,30 @@ contract diploma {
             // not authorized to modify the struct
         }
     }
-    
+
     function add_diploma(uint universityId, uint diplomaId, bytes32 diploma_ipfs_link) {
         // diploma and certificate validity have to be checked externally
         signatories[universityId].diplomas[diplomaId] = diploma_ipfs_link; // UNSAFE, ONLY FOR DEMO PURPOSES!
     }
-    
+
     // Commands to update the state
     function modify_university() {}
     function modify_diploma() {}
-    
+
     // Queries
     function authorized_to_modify() {} // only the multisig and the concerned university can modify.
     function get_diploma_mapping() {}
     function get_university_mapping() {}
-    
-    function get_diploma_hash(uint universityId, uint diplomaId) returns constant (bytes32) {
+
+    function get_diploma_hash(uint universityId, uint diplomaId) constant  returns (bytes32) {
         return signatories[universityId].diplomas[diplomaId];
     }
-    
-    function ping_pong(uint id) returns constant (uint) {
+
+    function ping_pong(uint id) constant returns  (uint) {
         return id;
     }
 
-    function bim_bam(bytes32 str) returns constant (bytes32) {
+    function bim_bam(bytes32 str) constant returns (bytes32) {
         return str;
     }
 
