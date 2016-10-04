@@ -44,6 +44,13 @@ contract diploma {
         return signatories[universityId].diplomas[diplomaId];
     }
     
+    function ping_pong(uint id) returns (uint) {
+        return id;
+    }
+
+    function bim_bam(bytes32 str) returns (bytes32) {
+        return str;
+    }
 
     function get_owner_address() {}
     function get_university_name(uint universityId) {}
