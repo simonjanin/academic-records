@@ -77,6 +77,18 @@
         done(null,keccak_256(data));
     }
 
+    Api.prototype.getHashFromFile = function(path,done){
+      var myThis = this;
+      var reader = new FileReader();
+      reader.onload= function(evt){
+        var content = evt.target.result;
+        myThis.calculateHashFromString(content,function(err,hash){
+          done(null,hash);
+        });
+      }
+      reader.readAsText(path);
+    }
+
     Api.prototype.checkDiploma = function(string,universityId,diplomaId,done){
       var myThis = this;
       this.getInsertedContract(function(err,contract){
@@ -113,16 +125,20 @@
     function add_diploma(){
         var diplomaId = $('#InputDiplomaId').val() || "";
         var diplomaUniversityId = $('#InputDiplomaUniversityId').val() || "";
-        var diplomaLink = $('#InputDiplomaLink').val() || "";
-        console.log("Adding diploma with: " + diplomaId + ":"+ diplomaUniversityId + ":" + diplomaLink);
-        api.add_diploma(diplomaId,diplomaUniversityId,diplomaLink,function(){
-          flipPanel($('#panel-diploma'),function(){
-          console.log("received diploma confirmation");
-            $('#InputDiplomaId').val('');
-            $('#InputDiplomaUniversityId').val('');
-            $('#InputDiplomaLink').val('');
+        var diplomaFile = $('#InputDiplomaFile')[0].files[0];
+        console.log("Adding diploma with: " + diplomaId + ":"+ diplomaUniversityId + ":" + diplomaFile);
+        api.getHashFromFile(diplomaFile,function(err,diplomaHash){
+
+
+          api.add_diploma(diplomaId,diplomaUniversityId,diplomaHash,function(){
+            flipPanel($('#panel-diploma'),function(){
+            console.log("received diploma confirmation");
+              $('#InputDiplomaId').val('');
+              $('#InputDiplomaUniversityId').val('');
+              $('#InputDiplomaLink').val('');
+            });
           });
-        });
+      });
     }
 
     function check_certificate_url(){
@@ -130,10 +146,8 @@
       var diplomaId = $('#InputCertificateDiplomaId').val() || "";
       var file = $('#InputCertificateFile')[0].files[0] ;
       //get string from file
-      var reader = new FileReader();
-      reader.onload = function(fileContents){
-          console.log(fileContents.target.result);
-          api.checkDiploma(fileContents.target.result,universityId,diplomaId,function(err,val){
+      api.getHashFromFile(file,function(err,hash){
+          api.checkDiploma(hash,universityId,diplomaId,function(err,val){
             var p = $('#CertificateAlertPlaceHolder');
             p.removeClass('alert');
             p.removeClass('alert-success');
@@ -152,8 +166,7 @@
               p.text('Certificate check failed! This certificate is invalid!');
             }
           });
-      };
-      reader.readAsText(file);
+      });
     }
     function flipPanel(panel,intermediate){
       panel.addClass('panel-flip');
@@ -259,8 +272,8 @@
               </div>
 
               <div class="form-group">
-                  <label for="InputDiplomaLink">IPFS Link Hash</label>
-                  <input type="text" class="form-control" id="InputDiplomaLink" placeholder="9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658">
+                  <label for="InputDiplomaFile">IPFS Link Hash</label>
+                  <input type="file" class="form-control" id="InputDiplomaFile" placeholder="9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658">
               </div>
 
               <button onClick="add_diploma()" type="button" class="btn btn-primary pull-right">Submit</button>
