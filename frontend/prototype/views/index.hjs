@@ -74,7 +74,7 @@
     Api.prototype.contractAdress = "0x3c2fa630a2865a301ccf515bad698e0830075fe3";
 
     Api.prototype.calculateHashFromString = function(data,done){
-        done(null,keccak_512(data));
+        done(null,keccak_256(data));
     }
 
     Api.prototype.checkDiploma = function(string,universityId,diplomaId,done){
