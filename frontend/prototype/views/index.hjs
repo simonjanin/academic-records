@@ -83,6 +83,8 @@
       reader.onload= function(evt){
         var content = evt.target.result;
         myThis.calculateHashFromString(content,function(err,hash){
+          hash = '0x' + hash;
+          console.log('Hash for ' + path + ' is ' + hash);
           done(null,hash);
         });
       }
@@ -94,6 +96,7 @@
       this.getInsertedContract(function(err,contract){
         myThis.calculateHashFromString(string,function(err,hashedString){
           var nodeHash = contract.get_diploma_hash(universityId,diplomaId);
+          console.log('Hash for university '+ universityId + ' and diploma ' + diplomaId + ' is ' + nodeHash);
           done(null,nodeHash === hashedString);
         });
       })
