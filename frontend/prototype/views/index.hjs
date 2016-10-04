@@ -71,16 +71,18 @@
           done(null,null);
       });
     }
-    Api.prototype.contractAdress = "0x5d2828f9bc0931e2d486548def7554ff7e945702";
+    Api.prototype.contractAdress = "0x3c2fa630a2865a301ccf515bad698e0830075fe3";
 
     Api.prototype.calculateHashFromString = function(data,done){
         done(null,keccak_512(data));
     }
 
-    Api.prototype.isStringInContract = function(string,done){
+    Api.prototype.checkDiploma = function(string,universityId,diplomaId,done){
+      var myThis = this;
       this.getInsertedContract(function(err,contract){
-        this.calculateHashFromString(string,function(err,hashedString){
-          done(null,contract.get_hash(hashedString));
+        myThis.calculateHashFromString(string,function(err,hashedString){
+          var nodeHash = contract.get_diploma_hash(universityId,diplomaId);
+          done(null,nodeHash === hashedString);
         });
       })
     }
@@ -122,6 +124,37 @@
           });
         });
     }
+
+    function check_certificate_url(){
+      var universityId = $('#InputCertificateUniversityId').val() || "";
+      var diplomaId = $('#InputCertificateDiplomaId').val() || "";
+      var file = $('#InputCertificateFile')[0].files[0] ;
+      //get string from file
+      var reader = new FileReader();
+      reader.onload = function(fileContents){
+          console.log(fileContents.target.result);
+          api.checkDiploma(fileContents.target.result,universityId,diplomaId,function(err,val){
+            var p = $('#CertificateAlertPlaceHolder');
+            p.removeClass('alert');
+            p.removeClass('alert-success');
+            p.removeClass('alert-danger');
+
+            p.addClass('alert');
+            console.log("Diploma is valid " + val);
+            if(val){
+              //check successfull
+              p.addClass('alert-success');
+              p.text('Certificate is valid!');
+            }else{
+              //invalid certificate
+
+              p.addClass('alert-danger');
+              p.text('Certificate check failed! This certificate is invalid!');
+            }
+          });
+      };
+      reader.readAsText(file);
+    }
     function flipPanel(panel,intermediate){
       panel.addClass('panel-flip');
       setTimeout(function(){
@@ -136,6 +169,40 @@
       <div class="jumbotron">
         <h1>Get your diplomas certified!</h1>
         <h4>All your diplomas stored savely in the blockchain.</h4>
+      </div>
+      <div class="row">
+        <div class="col-md-12 col-cs-12">
+        <div class="panel panel-default"  id="panel-university">
+          <div class="panel-heading">
+            Check certificate
+          </div>
+
+
+          <div class="panel-body">
+            <form>
+
+                <div class="form-group">
+                  <label for="InputCertificateUniversityId">University ID</label>
+                  <input type="text" class="form-control" id="InputCertificateUniversityId" placeholder="Very long number">
+                </div>
+
+                <div class="form-group">
+                  <label for="InputCertificateDiplomaId">Diploma ID</label>
+                  <input type="text" class="form-control" id="InputCertificateDiplomaId" placeholder="Very long number">
+                </div>
+              <div class="form-group">
+                <label for="InputCertificateFile">Certificate File</label>
+                <input type="file" class="form-control" id="InputCertificateFile" >
+              </div>
+              <div id="CertificateAlertPlaceHolder">
+
+              </div>
+              <button onClick="check_certificate_url()" type="button" class="btn btn-primary pull-right">Check</button>
+
+            </form>
+        </div>
+      </div>
+    </div>
       </div>
       <div class="row">
         <div class="col-md-6 col-xs-12">
