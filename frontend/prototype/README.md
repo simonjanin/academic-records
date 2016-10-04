@@ -28,10 +28,10 @@ And the startup script:
 ./geth  --nodiscover --maxpeers 0 --rpc --rpcapi "personal,web3,eth,db,net.miner" --rpccorsdomain "*" --datadir ./data --networkid 1212 --autodag --ipcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3"
 ```
 
-## Creating the contract 
+## Creating the contract
 You can create the contract by executing
 ```javascript
-api.prototype.createContract(function(err,val){console.log(val);});
+api.createContract(function(err,val){console.log(val);});
 ```
 in your browsers js console. Copy the printed address to
 ```javascript
