@@ -1,0 +1,33 @@
+
+eth.accounts
+geth account new
+account new
+miner.start(2)
+eth.accounts
+personal
+eth.accounts
+miner.start(2)
+miner.stop()
+eth.accounts[0]
+eth.accounts[0].balance
+eth.accounts[0].balance()
+web3.fromWei(eth.getBalance(accounts[0]), "ether")
+web3.fromWei(eth.getBalance(accounts[0]), "ether"))
+web3.fromWei(eth.getBalance(eth.coinbase), "ether")
+eth.coinbase.unlokc
+eth.coinbase.unlock()
+eth.accounts[0]
+miner.start(1)
+miner.start(4)
+miner.start(2)
+miner.stop()
+miner.start(2)
+miner.stop
+miner.stop()
+miner.start(1)
+eth.accounts[0]
+eth.miner(2)
+miner.start(2)
+miner.stop()
+miner.start(1)
+EXIT

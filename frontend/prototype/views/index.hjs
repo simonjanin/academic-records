@@ -55,7 +55,7 @@
     Api.prototype.getInsertedContract = function(done){
       var myThis = this;
       this.getCompiledContract(function(err,compiledContract){
-         var diploma =   web3.eth.contract(compiledContract.abi.diploma.info.abiDefinition).at(myThis.contractAdress);
+         var diploma =   web3.eth.contract(compiledContract.abi.diploma.info.abiDefinition).at(myThis.contractAddress);
          done(null,diploma);
       });
     }
@@ -72,7 +72,7 @@
           done(null,null);
       });
     }
-    Api.prototype.contractAdress = "0x3b5d4ecd27f988409822753fc52ef5b267e4ad04";
+    Api.prototype.contractAddress = "0x28b04e4b04ff18036cb2181900807dfe2357e612";
 
     Api.prototype.calculateHashFromString = function(data,done){
         done(null,keccak_256(data));
@@ -113,15 +113,15 @@
         var caller = $('#InputUniversityCaller').val() || "";
         var universityId = $('#InputUniversityId').val() ||"";
         var universityName = $('#InputUniversityName').val() || "";
-        var universityAdress = $('#InputUniversityAdress').val() || "";
-        console.log("Adding university with: " + caller + ":" + universityId + ":" + universityName + ":" + universityAdress);
-        api.add_university(caller,universityId,universityName,universityAdress,"",function(){
+        var universityAddress = $('#InputUniversityAdress').val() || "";
+        console.log("Adding university with: " + caller + ":" + universityId + ":" + universityName + ":" + universityAddress);
+        api.add_university(caller,universityId,universityName,universityAddress,"",function(){
           console.log("received university confirmation");
           flipPanel($('#panel-university'),function () {
             $('#InputUniversityCaller').val('');
             $('#InputUniversityId').val('');
             $('#InputUniversityName').val('');
-            $('#InputUniversityAdress').val('');
+            $('#InputUniversityAddress').val('');
           });
         });
     }
@@ -185,7 +185,7 @@
     <div class="container">
       <div class="jumbotron">
         <h1>Get your diplomas certified!</h1>
-        <h4>All your diplomas stored savely in the blockchain.</h4>
+        <h4>All your diplomas managed safely in the blockchain.</h4>
       </div>
       <div class="row">
         <div class="col-md-12 col-cs-12">
@@ -243,12 +243,12 @@
 
                 <div class="form-group">
                     <label for="InputUniversityName">University</label>
-                    <input type="text" class="form-control" id="InputUniversityName" placeholder="Havard Medical School">
+                    <input type="text" class="form-control" id="InputUniversityName" placeholder="Harvard Medical School">
                 </div>
 
                 <div class="form-group">
-                  <label for="InputUniversityAdress">University Adress</label>
-                  <input type="text" class="form-control" id="InputUniversityAdress" placeholder="Etherum Account (e.g. 0x1321983782abe38294388)">
+                  <label for="InputUniversityAddress">University Address</label>
+                  <input type="text" class="form-control" id="InputUniversityAddress" placeholder="Ethereum Account (e.g. 0x1321983782abe38294388)">
                 </div>
                 <button onClick="add_university()" type="button" class="btn btn-primary pull-right">Submit</button>
               </form>
