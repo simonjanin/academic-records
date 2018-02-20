@@ -17,32 +17,36 @@
         this.web3 = web3;
       }
     //passes contract without newlines to funtion
-    Api.prototype.getContractSource = function(done){
-      var client = new XMLHttpRequest();
-      client.open('GET', '/contracts/register_diploma.sol',true);
+    Api.prototype.getHTTPJSON = function(path,done){
+      const client = new XMLHttpRequest();
+      
       client.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-          done(null,client.responseText);
+        
+        if (client.readyState == 4 && client.status == 200) {
+          done(null,JSON.parse(client.responseText));
         }
-      }
+      }.bind(this);
+      client.open('GET', path,true);
       client.send();
     }
 
     Api.prototype.getCompiledContract = function (done) {
-      this.getContractSource(function(error,contractString){
-          web3.eth.compile.solidity(contractString,function(err,result){
-            if(err){
-              return console.error(err);
-            }
-            var contract = web3.eth.contract(result);
-            done(null,contract);
-          });
-      });
+      this.getHTTPJSON('/contracts/register_diploma.abi',function(err,abiData){
+        this.getHTTPJSON('/contracts/register_diploma.bin',function(err,binData){
+          
+          return  done(null,web3.eth.contract(abiData),binData.object);
+        }.bind(this));
+      }.bind(this));
     }
 
     Api.prototype.createContract = function(done){
-      this.getCompiledContract(function(err,compiledContract){
-        web3.eth.contract(compiledContract.abi.diploma.info.abiDefinition).new({gas:1000000,from:web3.eth.defaultAccount,data:compiledContract.abi.diploma.code},function(err,contract){
+    
+      this.getCompiledContract(function(err,compiledContract,contractBinary){
+        
+        web3.eth.contract(compiledContract.abi).new(
+          {gas:1000000,
+          from:web3.eth.defaultAccount,
+          data:"0x"+contractBinary},function(err,contract){
           if(err){
             return console.error(err);
           }
@@ -54,8 +58,8 @@
     }
     Api.prototype.getInsertedContract = function(done){
       var myThis = this;
-      this.getCompiledContract(function(err,compiledContract){
-         var diploma =   web3.eth.contract(compiledContract.abi.diploma.info.abiDefinition).at(myThis.contractAddress);
+      this.getCompiledContract(function(err,compiledContract,contractBinary){
+         var diploma =   web3.eth.contract(compiledContract.abi).at(myThis.contractAddress);
          done(null,diploma);
       });
     }
