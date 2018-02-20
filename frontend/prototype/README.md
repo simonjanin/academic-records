@@ -25,11 +25,11 @@ Generated using the genesis file:
 And the startup script:
 ```bash
 #!/bin/bash
-./geth  --nodiscover --maxpeers 0 --rpc --rpcapi "personal,web3,eth,db,net.miner" --rpccorsdomain "*" --datadir ./data --networkid 1212 --autodag --ipcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3"
+./geth  --nodiscover --maxpeers 0 --rpc --rpcapi "personal,web3,eth,db,net.miner" --rpccorsdomain "*" --datadir ./data --networkid 1212 --dev
 ```
 
 ## Creating the contract
-You can create the contract by executing
+You can create the contract by executing (you may have to execute this multiple times)
 ```javascript
 api.createContract(function(err,val){console.log(val);});
 ```
